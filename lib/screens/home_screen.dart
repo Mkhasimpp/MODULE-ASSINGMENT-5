@@ -1,73 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../data/product_list.dart';
-import '../widgets/product_card.dart';
-import '../widgets/cart_badge.dart';
-import '../providers/cart_provider.dart';
-
-import 'product_details.dart';
+import '../main.dart';
 import 'settings_screen.dart';
 import 'cart_screen.dart';
+import 'product_details.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  int gridCount(double width) {
-    if (width < 600) return 2; // Mobile
-    return 4; // Tablet/Desktop
-  }
-
   @override
   Widget build(BuildContext context) {
+    var p = context.watch<AppProvider>();
+
+    final products = [
+      {'name': 'Laptop', 'price': 45000.0, 'img': 'assets/images/laptop.png'},
+      {'name': 'Phone', 'price': 15000.0, 'img': 'assets/images/phone.png'},
+      {'name': 'Headset', 'price': 2000.0, 'img': 'assets/images/headset.png'},
+      {'name': 'Watch', 'price': 3000.0, 'img': 'assets/images/watch.png'},
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Shop"),
         actions: [
-          IconButton(
-            icon: CartBadge(),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => CartScreen()),
-              );
-            },
+
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CartScreen()),
+                ),
+              ),
+
+              if (p.cartCount > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: CircleAvatar(
+                    radius: 8,
+                    backgroundColor: Colors.red,
+                    child: Text(
+                      p.cartCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                    ),
+                  ),
+                )
+            ],
           ),
+
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => SettingsScreen()),
-              );
-            },
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
           ),
         ],
       ),
+
       body: GridView.builder(
-        padding: const EdgeInsets.all(12),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: gridCount(MediaQuery.of(context).size.width),
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 0.7,
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: .75,
         ),
         itemCount: products.length,
+
         itemBuilder: (_, i) {
-          return ProductCard(
-            products[i],
-                () {
+          var item = products[i];
+
+          return GestureDetector(
+            onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => ProductDetails(products[i]),
-                ),
+                MaterialPageRoute(builder: (_) => ProductDetails(item)),
               );
             },
-                () {
-              Provider.of<CartProvider>(context, listen: false)
-                  .add(products[i]);
-            },
+
+            child: Card(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+                  Image.asset(item['img'] as String, height: 80),
+
+                  const SizedBox(height: 10),
+
+                  Text(item['name'] as String,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+
+                  Text("₹${item['price']}"),
+
+                  const SizedBox(height: 5),
+
+                  ElevatedButton(
+                    onPressed: () => p.addCart(item),
+                    child: const Text("Add Cart"),
+                  )
+                ],
+              ),
+            ),
           );
         },
       ),

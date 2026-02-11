@@ -2,28 +2,19 @@ import 'package:flutter/material.dart';
 import '../models/product_model.dart';
 
 class CartProvider extends ChangeNotifier {
-  final Map<Product, int> _items = {};
+  final List<Product> _cart = [];
 
-  Map<Product, int> get items => _items;
+  List<Product> get cart => _cart;
 
-  void add(Product product) {
-    if (_items.containsKey(product)) {
-      _items[product] = _items[product]! + 1;
-    } else {
-      _items[product] = 1;
-    }
+  void add(Product p) {
+    _cart.add(p);
     notifyListeners();
   }
 
-  int get totalItems =>
-      _items.values.fold(0, (a, b) => a + b);
+  // For cart badge
+  int get totalItems => _cart.length;
 
-  double get totalAmount =>
-      _items.entries.fold(
-          0, (sum, e) => sum + e.key.price * e.value);
-
-  void clear() {
-    _items.clear();
-    notifyListeners();
-  }
+  // Total price
+  double get total =>
+      _cart.fold(0, (sum, item) => sum + item.price);
 }

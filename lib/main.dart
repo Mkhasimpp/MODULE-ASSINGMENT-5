@@ -1,20 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/theme_provider.dart';
-import 'providers/cart_provider.dart';
 import 'screens/home_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-      ],
+    ChangeNotifierProvider(
+      create: (_) => AppProvider(),
       child: const MyApp(),
     ),
   );
+}
+
+class AppProvider extends ChangeNotifier {
+  bool dark = false;
+  String font = 'Roboto';
+  double fontSize = 14;
+
+  Map cart = {};
+
+  void toggleDark() {
+    dark = !dark;
+    notifyListeners();
+  }
+
+  void changeFont(String f) {
+    font = f;
+    notifyListeners();
+  }
+
+  void changeFontSize(double s) {
+    fontSize = s;
+    notifyListeners();
+  }
+
+  void addCart(item) {
+    if (cart.containsKey(item['name'])) {
+      cart[item['name']]['qty']++;
+    } else {
+      cart[item['name']] = {...item, 'qty': 1};
+    }
+    notifyListeners();
+  }
+
+  void clearCart() {
+    cart.clear();
+    notifyListeners();
+  }
+
+  double get total {
+    double t = 0;
+    cart.forEach((k, v) {
+      t += v['price'] * v['qty'];
+    });
+    return t;
+  }
+
+  /// CART BADGE = TOTAL QUANTITY
+  int get cartCount {
+    int count = 0;
+    cart.forEach((k, v) {
+      count += v['qty'] as int;
+    });
+    return count;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -22,44 +70,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, theme, _) {
-        final base = theme.useRoboto
-            ? GoogleFonts.robotoTextTheme()
-            : GoogleFonts.poppinsTextTheme();
-
-        final sizedTheme = base.copyWith(
-          bodyLarge:
-          base.bodyLarge?.copyWith(fontSize: theme.baseFontSize),
-          bodyMedium:
-          base.bodyMedium?.copyWith(fontSize: theme.baseFontSize),
-          bodySmall:
-          base.bodySmall?.copyWith(fontSize: theme.baseFontSize),
-          titleLarge:
-          base.titleLarge?.copyWith(fontSize: theme.baseFontSize + 6),
-          titleMedium:
-          base.titleMedium?.copyWith(fontSize: theme.baseFontSize + 4),
-          titleSmall:
-          base.titleSmall?.copyWith(fontSize: theme.baseFontSize + 2),
-        );
-
+    return Consumer<AppProvider>(
+      builder: (_, p, __) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          themeMode: theme.isDark ? ThemeMode.dark : ThemeMode.light,
+
+          themeMode: p.dark ? ThemeMode.dark : ThemeMode.light,
+
+          darkTheme: ThemeData.dark().copyWith(
+            textTheme: TextTheme(
+              bodyMedium: TextStyle(fontSize: p.fontSize),
+            ),
+          ),
 
           theme: ThemeData(
-            brightness: Brightness.light,
-            useMaterial3: true,
-            textTheme: sizedTheme,
+            fontFamily: p.font,
+            textTheme: TextTheme(
+              bodyMedium: TextStyle(fontSize: p.fontSize),
+            ),
           ),
 
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            useMaterial3: true,
-            textTheme: sizedTheme,
-          ),
-
-          home: HomeScreen(),
+          home: const HomeScreen(),
         );
       },
     );

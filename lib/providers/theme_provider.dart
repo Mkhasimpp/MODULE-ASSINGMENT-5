@@ -2,32 +2,15 @@ import 'package:flutter/material.dart';
 
 class ThemeProvider extends ChangeNotifier {
   bool isDark = false;
+  double fontSize = 16;
 
-  double baseFontSize = 14; // 12 / 14 / 18
-  bool useRoboto = false;
-
-  void toggleTheme() {
-    isDark = !isDark;
+  void toggleTheme(bool v) {
+    isDark = v;
     notifyListeners();
   }
 
-  void setSmall() {
-    baseFontSize = 12;
-    notifyListeners();
-  }
-
-  void setMedium() {
-    baseFontSize = 14;
-    notifyListeners();
-  }
-
-  void setLarge() {
-    baseFontSize = 18;
-    notifyListeners();
-  }
-
-  void toggleFont() {
-    useRoboto = !useRoboto;
+  void setFontSize(double v) {
+    fontSize = v;
     notifyListeners();
   }
 }

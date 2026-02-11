@@ -1,6 +1,5 @@
-name: ecommerce_ui
-description: Responsive Flutter E-Commerce UI Assignment
-
+name: shop_app
+description: Simple ecommerce demo app
 publish_to: "none"
 
 version: 1.0.0+1
@@ -12,14 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
 
+  cupertino_icons: ^1.0.6
   provider: ^6.0.5
-  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^3.0.0
 
 flutter:
 
@@ -28,7 +27,15 @@ flutter:
   assets:
     - assets/images/
 
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/icon.png"
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Regular.ttf

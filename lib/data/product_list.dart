@@ -1,24 +1,35 @@
 import '../models/product_model.dart';
 
-List<Product> products = [
+List<Product> productList = [
   Product(
-    "Laptop",
-    45000,
-    "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
+    id: 1,
+    name: "Laptop",
+    price: 45000,
+    image:
+    "https://i.imgur.com/QCNbOAo.png",
   ),
+
   Product(
-    "Phone",
-    15000,
-    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
+    id: 2,
+    name: "Phone",
+    price: 15000,
+    image:
+    "https://i.imgur.com/6YVQq3W.png",
   ),
+
   Product(
-    "Headset",
-    2000,
-    "https://images.unsplash.com/photo-1585386959984-a4155228c0d1",
+    id: 3,
+    name: "Headset",
+    price: 2000,
+    image:
+    "https://i.imgur.com/4QyZ8Wz.png",
   ),
+
   Product(
-    "Watch",
-    3000,
-    "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+    id: 4,
+    name: "Watch",
+    price: 3000,
+    image:
+    "https://i.imgur.com/2Qn9FqL.png",
   ),
 ];

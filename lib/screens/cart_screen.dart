@@ -1,79 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart_provider.dart';
+import '../main.dart';
 
 class CartScreen extends StatelessWidget {
+  const CartScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
+    var p = context.watch<AppProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Cart")),
-      body: cart.items.isEmpty
-          ? Center(child: Text("Cart is empty"))
-          : Column(
+      appBar: AppBar(title: const Text("Cart")),
+      body: Column(
         children: [
+
           Expanded(
-            child: ListView(
-              children: cart.items.entries.map((entry) {
+            child: p.cart.isEmpty
+                ? const Center(child: Text("Cart is Empty"))
+                : ListView(
+              children: p.cart.values.map<Widget>((e) {
                 return ListTile(
-                  title: Text(entry.key.name),
-                  subtitle: Text("Qty: ${entry.value}"),
-                  trailing: Text(
-                    "₹${(entry.key.price * entry.value).toStringAsFixed(0)}",
-                  ),
+                  title: Text("${e['name']}  x${e['qty']}"),
+                  trailing: Text("₹${e['price'] * e['qty']}"),
                 );
               }).toList(),
             ),
           ),
 
-          Divider(),
+          const Divider(),
 
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Total Items"),
-                    Text(cart.totalItems.toString()),
-                  ],
+                Text(
+                  "Total : ₹${p.total}",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Total Amount",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold)),
-                    Text("₹${cart.totalAmount.toStringAsFixed(0)}",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                SizedBox(height: 10),
+
+                const SizedBox(height: 10),
+
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    child: Text("Place Order"),
-                    onPressed: () {
-                      cart.clear();
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(
-                        SnackBar(
-                            content:
-                            Text("Order Placed Successfully")),
+                    onPressed: p.cart.isEmpty
+                        ? null
+                        : () {
+                      p.clearCart();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Order Placed Successfully"),
+                        ),
                       );
-                      Navigator.pop(context);
                     },
+                    child: const Text("Place Order"),
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

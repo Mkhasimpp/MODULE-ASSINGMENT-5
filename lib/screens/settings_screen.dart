@@ -1,74 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
+import '../main.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context);
+    var p = context.watch<AppProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Settings"),
-      ),
-      body: ListView(
-        children: [
-          // 🌙 Dark Mode
-          SwitchListTile(
-            title: const Text("Dark Mode"),
-            value: theme.isDark,
-            onChanged: (_) => theme.toggleTheme(),
-          ),
+      appBar: AppBar(title: const Text("Settings")),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
 
-          const Divider(),
-
-          // 🔠 Font Size Title
-          const Padding(
-            padding: EdgeInsets.all(12),
-            child: Text(
-              "Font Size",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            SwitchListTile(
+              value: p.dark,
+              onChanged: (_) => p.toggleDark(),
+              title: const Text("Dark Mode"),
             ),
-          ),
 
-          // Small Font
-          RadioListTile<int>(
-            title: const Text("Small"),
-            value: 12,
-            groupValue: theme.baseFontSize.toInt(),
-            onChanged: (_) => theme.setSmall(),
-          ),
+            const SizedBox(height: 10),
 
-          // Medium Font
-          RadioListTile<int>(
-            title: const Text("Medium"),
-            value: 14,
-            groupValue: theme.baseFontSize.toInt(),
-            onChanged: (_) => theme.setMedium(),
-          ),
+            const Text("Font Family"),
 
-          // Large Font
-          RadioListTile<int>(
-            title: const Text("Large"),
-            value: 18,
-            groupValue: theme.baseFontSize.toInt(),
-            onChanged: (_) => theme.setLarge(),
-          ),
+            DropdownButton(
+              value: p.font,
+              items: ['Roboto','Poppins','OpenSans']
 
-          const Divider(),
-
-          // 🔤 Font Family
-          SwitchListTile(
-            title: const Text("Use Roboto Font"),
-            subtitle: Text(
-              theme.useRoboto ? "Roboto" : "Poppins",
+                .map((e) =>
+                  DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
+              onChanged: (v) => p.changeFont(v.toString()),
             ),
-            value: theme.useRoboto,
-            onChanged: (_) => theme.toggleFont(),
-          ),
-        ],
+
+            const SizedBox(height: 20),
+
+            const Text("Font Size"),
+
+            RadioListTile(
+              value: 12.0,
+              groupValue: p.fontSize,
+              onChanged: (v) => p.changeFontSize(v!),
+              title: const Text("Small"),
+            ),
+
+            RadioListTile(
+              value: 16.0,
+              groupValue: p.fontSize,
+              onChanged: (v) => p.changeFontSize(v!),
+              title: const Text("Medium"),
+            ),
+
+            RadioListTile(
+              value: 20.0,
+              groupValue: p.fontSize,
+              onChanged: (v) => p.changeFontSize(v!),
+              title: const Text("Large"),
+            ),
+          ],
+        ),
       ),
     );
   }
